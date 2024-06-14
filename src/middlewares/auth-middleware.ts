@@ -4,24 +4,16 @@ import UserModel from '../auth/models/User';
 
 const authService = new AuthService();
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ message: 'Authorization header missing' });
-  }
-
-  const token = authHeader.split(' ')[1];
+export const authMiddleware = async (token: string) => {
   const payload = authService.verifyJwt(token);
-
   if (!payload) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    return null;
   }
 
   const user = await UserModel.findById(payload.id);
   if (!user) {
-    return res.status(401).json({ message: 'User not found' });
+    return null;
   }
 
-  (req as any).user = user;
-  next();
+  return user;
 };

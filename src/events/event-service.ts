@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { CreateEventDto } from './dtos/CreateEvent.dot';
 import EventModel, { IEvent } from './models/Event';
 import { Event } from './types/response';
+import { SortOrder } from 'mongoose';
 
 
 
@@ -30,6 +31,25 @@ class EventService {
       return newEvent;
     }
   
+    async getEventsByCity(
+      city: string,
+      page: number = 1,
+      limit: number = 10,
+      sortBy: string = 'date',
+      sortDirection: string = 'asc'
+    ): Promise<IEvent[]> {
+      const sortOptions: { [key: string]: SortOrder } = {};
+      sortOptions[sortBy] = sortDirection === 'desc' ? -1 : 1;
+    
+      const events = await EventModel.find({ location: city })
+        .sort(sortOptions)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .exec();
+    
+      return events;
+    }
+    
     
   }
   

@@ -14,10 +14,12 @@ class AuthController {
       const createUserDto: CreateUserDto = req.body;
       const user = await this.authService.registerUser(createUserDto);
       res.status(201).json(user);
-    } catch (err) {
-      res.status(500).json({ message: 'Error registering user' });
+    } catch (err: any) {
+      console.error('Error registering user:', err.message);
+      res.status(500).json({ message: 'Error registering user', error: err.message });
     }
   }
+  
 
   loginUser = async (req: Request, res: Response): Promise<void> => {
     try {

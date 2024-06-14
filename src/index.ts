@@ -13,10 +13,18 @@ app.use(logger);
 app.use(express.json());
 app.use('/api/v1/',globalRouter);
 
-
 app.get('/helloworld',(request,response) =>{
   response.send("Hello World!");
-})
+});
+
+app.get('/env', (req, res) => {
+  res.json({
+    JWT_SECRET: process.env.JWT_SECRET,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
+    MONGODB_URL: process.env.MONGODB_URL,
+    PORT: process.env.PORT,
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server runs at http://localhost:${PORT}`);
